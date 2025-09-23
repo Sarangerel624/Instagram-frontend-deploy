@@ -62,7 +62,7 @@ const Page = () => {
       <div>
         <div className="font-bold text-2xl p-4">Explore AI generate images</div>
         <div className="pl-4 text-gray-700">
-          Describe what's on your mind. For best results, be specific
+          Describe what is on your mind. For best results, be specific
         </div>
         <Input
           placeholder="Example: I'm walking in fog like Bladerunner 2049"
