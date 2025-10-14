@@ -10,12 +10,13 @@ import { useRouter } from "next/navigation";
 import { Insta_Logo } from "@/icons/png-clipart-instagram-logo-computer-icons-logo-blog-instagram-purple-violet-thumbnail-removebg-preview 1";
 
 const Page = () => {
-  const { newUserSign, user } = useUser();
+  const { newUserSign, token, user } = useUser();
   const { push } = useRouter();
 
-  // useEffect(() => {
-  //   if (!user) push("/login");
-  // }, []);
+  useEffect(() => {
+    if (token) push("/");
+  }, [token]);
+
   const [sign, setSign] = useState({
     email: "",
     password: "",
@@ -35,10 +36,10 @@ const Page = () => {
   const hangleSign = async () => {
     await newUserSign(sign.email, sign.password, sign.username);
   };
-  console.log(sign);
+
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="mb-10">
+    <div className="flex flex-col justify-center items-center py-60">
+      <div className="mb-6">
         <Insta_Logo />
       </div>
       <div className="font-bold text-gray-600 text-center pl-11 pr-11 mb-8">

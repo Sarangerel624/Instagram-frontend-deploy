@@ -40,8 +40,8 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="mb-20">
+    <div className="flex flex-col justify-center items-center py-60">
+      <div className="mb-10">
         <Insta_Logo />
       </div>
       <div className="flex flex-col gap-2">

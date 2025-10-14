@@ -8,7 +8,7 @@ const Page = () => {
   const { push } = useRouter();
 
   const handleClick = () => {
-    push("/AI-image-generate");
+    push("/AI-generate");
   };
   return (
     <div>
@@ -20,12 +20,10 @@ const Page = () => {
           <div className="text-center font-bold mb-5 -mt-8">New photo post</div>
         </div>
       </div>
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center py-60">
         <Create_Logo />
-        <Button className="w-40 bg-blue-500" onClick={handleClick}>
-          Photo library
-        </Button>
-        <Button className="w-40 text-blue-500 bg-white">
+        <Button className="w-40 bg-blue-500">Photo library</Button>
+        <Button className="w-40 text-blue-500 bg-white" onClick={handleClick}>
           Generate with AI
         </Button>
       </div>
