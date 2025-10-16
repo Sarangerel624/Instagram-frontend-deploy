@@ -65,8 +65,8 @@ const Page = () => {
     push(`/profile/${userId}`);
   };
 
-  const pushComment = () => {
-    push(`/post/comments `);
+  const pushComment = (userId: string) => {
+    push(`/comment/${userId}`);
   };
   useEffect(() => {
     if (token) {
@@ -101,7 +101,7 @@ const Page = () => {
                   )}
                 </div>
                 <div>{post.like.length}</div>
-                <div>
+                <div onClick={() => pushComment(post._id)}>
                   <MessageCircle />
                 </div>
               </div>
@@ -110,10 +110,15 @@ const Page = () => {
                 <div className="font-bold">{post?.user.username}</div>
                 <div> {post?.caption}</div>
               </div>
-              <div className="text-gray-500" onClick={pushComment}>
+              <div className="text-gray-500">
                 All view {post.comment.length} comments
               </div>
-              <div className="text-gray-500">Add a comment...</div>
+              <div
+                className="text-gray-500"
+                onClick={() => pushComment(post._id)}
+              >
+                Add a comment...
+              </div>
             </div>
           </div>
         );
