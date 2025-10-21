@@ -74,6 +74,8 @@ const Page = () => {
     }
   }, [token]);
 
+
+  console.log(posts, "as")
   return (
     <div>
       {posts.map((post, index) => {
@@ -87,7 +89,7 @@ const Page = () => {
                 className="font-bold w-36 mt-1"
                 onClick={() => pushToUserProfile(post.user._id)}
               >
-                {post?.user.username}
+                {post?.user?.username}
               </div>
             </div>
             <img src={post.images} />
@@ -107,7 +109,7 @@ const Page = () => {
               </div>
               <div className="font-bold">{post.like.length} likes</div>
               <div className="flex gap-2">
-                <div className="font-bold">{post?.user.username}</div>
+                <div className="font-bold">{post?.user?.username}</div>
                 <div> {post?.caption}</div>
               </div>
               <div className="text-gray-500">

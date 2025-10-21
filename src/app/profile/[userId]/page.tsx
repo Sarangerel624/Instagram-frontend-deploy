@@ -5,7 +5,7 @@ import { useUser } from "@/providers/AuthProvider";
 import { Default_Profile } from "@/icons/defualtProjile";
 import { Button } from "@/components/ui/button";
 import { ZeroPost } from "@/icons/zeroPost";
-
+import { useRouter } from "next/navigation";
 type UserDataType = {
   _id: string;
   username: string;
@@ -32,7 +32,7 @@ const Page = () => {
   const [userdata, setUserdata] = useState<UserDataType[]>([]);
   const [userPost, setUserPost] = useState<UserPostType[]>([]);
   const { token, setToken, user } = useUser();
-
+  const {push} = useRouter()
   const mineId = user?._id;
   const userId = params.userId;
 
@@ -90,6 +90,10 @@ const Page = () => {
       fetchPosts();
     }
   }, [token]);
+
+const pushToUserPost = (postId: string) => {
+    push(`/user-post/${postId}`)
+  } 
   console.log(userdata, "userdata shu");
   console.log(userId, "ssd");
 
@@ -162,7 +166,7 @@ const Page = () => {
         ) : (
           <div className="flex flex-wrap flex-row">
             {userPost.map((post, index) => (
-              <div key={index} className="w-1/3">
+              <div key={index} className="w-1/3" onClick={() => pushToUserPost(post._id)}>
                 <img src={post?.images?.[0]} className="h-40 " />
               </div>
             ))}

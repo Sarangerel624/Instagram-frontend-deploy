@@ -5,16 +5,17 @@ import { Header } from "../_components/Header";
 import { Default_Profile } from "@/icons/defualtProjile";
 import { Button } from "@/components/ui/button";
 import { ZeroPost } from "@/icons/zeroPost";
-
+import { useRouter } from "next/navigation";
 type PostsType = {
   images: string[];
   caption: string;
   bio: string;
+  _id: string;
 };
 const Page = () => {
   const { token, user, setToken } = useUser();
   const [posts, setPosts] = useState<PostsType[]>([]);
-
+  const { push } = useRouter();
   const myPost = async () => {
     const res = await fetch("http://localhost:5000/profilePost", {
       method: "GET",
@@ -29,6 +30,13 @@ const Page = () => {
     }
   };
 
+  const pushToUserPost = (postId: string) => {
+    push(`/user-post/${postId}`);
+  };
+
+  const pushToEditPro = () => {
+    push(`/editProfile/${user?._id}`);
+  };
   useEffect(() => {
     myPost();
   }, [token]);
@@ -42,7 +50,11 @@ const Page = () => {
         </div>
         <div>
           <div className="font-bold text-[20px]">{user?.username}</div>
-          <Button variant="secondary" className="font-bold h-6 mt-1.5">
+          <Button
+            variant="secondary"
+            className="font-bold h-6 mt-1.5"
+            onClick={pushToEditPro}
+          >
             Edit profile
           </Button>
         </div>
@@ -78,7 +90,11 @@ const Page = () => {
       ) : (
         <div className="flex flex-wrap flex-row">
           {posts.map((post, index) => (
-            <div key={index} className="w-1/3">
+            <div
+              key={index}
+              className="w-1/3"
+              onClick={() => pushToUserPost(post._id)}
+            >
               <img src={post?.images?.[0]} className="h-40 " />
             </div>
           ))}

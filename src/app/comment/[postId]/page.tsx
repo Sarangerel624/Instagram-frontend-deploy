@@ -7,10 +7,30 @@ import { useUser } from "@/providers/AuthProvider";
 import { Default_Profile } from "@/icons/defualtProjile";
 import { useState, ChangeEvent, useEffect } from "react";
 
+type commentDataPostType = {
+  caption : string,
+  comment : string[],
+  comments : string[],
+  user : {
+    username : string,
+    profilePicture: string[],
+  }
+}
+
+type commentDataUserType = {
+  profilePicture : string[],
+  username: string
+}
+type commentDataType = {
+  comment : string,
+  post : commentDataPostType,
+  user : commentDataUserType
+}
 const Page = () => {
   const { token, user, setToken } = useUser();
-  const [commentValue, setCommentValue] = useState("");
-  const [comment, setComment] = useState([]);
+  const [comment, setCommentValue] = useState("");
+  const [comments, setComment] = useState([]);
+  const [commentData, setCommentData] = useState<commentDataType[]>([]);
   const params = useParams();
   const [postData, setPostData] = useState([]);
   const handleInputValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -31,54 +51,73 @@ const Page = () => {
 
     if (response.ok) {
       const res = await response.json();
-      setComment(res);
+      setCommentData(res);
+      
     }
   };
 
+
+
   const createdComment = async () => {
-    const response = await fetch(`http://localhost:5000/comment/${postId}`, {
-      method: "GET",
+    const response = await fetch(`http://localhost:5000/comment`, {
+      method: "POST",
       headers: {
         "Content-type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: {
+      body:  JSON.stringify({
         user: user?._id,
-        post: postId,
-        comment: commentValue,
-      },
+        postId: postId,
+        comment: comment,
+      }),
     });
 
     if (response.ok) {
       const res = await response.json();
       setComment(res);
+      commentsFetch()
     }
   };
 
-  const createComments = () => {
-    createdComment();
-  };
+
   useEffect(() => {
     if (token) {
       commentsFetch();
     }
   }, [token]);
-
+    console.log(commentData, "commentdataaa")
   return (
     <div>
       <div className="text-center font-bold mt-9 border-b-1 p-2">Comments</div>
-      <Default_Profile />
-      <div></div>
-      {/* <div>{comment[0].post.caption}</div> */}
-      <div className="flex gap-3 ">
+      <div className="flex gap-2 border-b-1 p-2">
+         <Default_Profile />
+         <div className="font-bold">{commentData[0]?.post?.user?.username}</div>
+         <div>{commentData[0]?.post?.caption}</div>
+      </div >
+      <div className="flex gap-3">
         <Input
           placeholder="add a comment..."
-          value={commentValue}
+          value={comment}
           onChange={(e) => handleInputValue(e)}
           className="w-[300px]"
         />
-        <Button onClick={createComments}>Comment</Button>
+       <div>
+         <Button onClick={createdComment}>Comment</Button>
+       </div>
       </div>
+
+      <div className="mt-4">
+        {commentData.map((comment , index) => {
+          return(
+            <div key={index} className="flex gap-2 mt-3">
+                <Default_Profile />
+                 <div className="font-bold mt-2">{comment?.user?.username}</div>
+                <div className="mt-2">{comment?.comment}</div>
+            </div>
+          )
+        })}
+      </div>
+     
     </div>
   );
 };
