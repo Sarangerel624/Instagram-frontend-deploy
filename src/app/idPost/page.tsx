@@ -15,6 +15,7 @@ type PostsType = {
 const Page = () => {
   const { token, user, setToken } = useUser();
   const [posts, setPosts] = useState<PostsType[]>([]);
+  const [userData, setUserdata] = useState();
   const { push } = useRouter();
   const myPost = async () => {
     const res = await fetch("http://localhost:5000/profilePost", {
@@ -30,6 +31,22 @@ const Page = () => {
     }
   };
 
+  const userId = user?._id;
+  const userDataFetch = async () => {
+    const response = await fetch(
+      `http://localhost:5000/editUserdata/${userId}`,
+      {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (response.ok) {
+      const res = await response.json();
+      setUserdata(res);
+    }
+  };
   const pushToUserPost = (postId: string) => {
     push(`/user-post/${postId}`);
   };
@@ -38,8 +55,13 @@ const Page = () => {
     push(`/editProfile/${user?._id}`);
   };
   useEffect(() => {
-    myPost();
+    if (token) {
+      myPost();
+      userDataFetch();
+    }
   }, [token]);
+
+  console.log(userData, "userdataa");
 
   return (
     <div>
