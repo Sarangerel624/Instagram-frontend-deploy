@@ -7,6 +7,16 @@ import { Heart } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Ellipsis } from "lucide-react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 type UserType = {
   username: string;
   profilePic: string[];
@@ -66,6 +76,19 @@ const Page = () => {
     push(`/comment/${userId}`);
   };
 
+  const deletePost = async (postId: string) => {
+    const response = await fetch(`/userPostDelete/${postId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.ok) {
+      push(`profile/${myId}`);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       fetchPosts();
@@ -81,7 +104,24 @@ const Page = () => {
           <div className="mt-2 font-bold">{userPost?.user?.username}</div>
         </div>
         <div className="mr-3 mt-2">
-          <Ellipsis />
+          <Dialog>
+            <DialogTrigger>
+              <Ellipsis />
+            </DialogTrigger>
+            <DialogTitle></DialogTitle>
+            <DialogContent>
+              <DialogDescription
+                className="text-red-600 font-bold"
+                onClick={deletePost}
+              >
+                Delete
+              </DialogDescription>
+              <DialogDescription className="font-bold">Edit</DialogDescription>
+              <DialogDescription className="font-bold">
+                Cancel
+              </DialogDescription>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <img src={userPost?.images[0]} className="mt-2"></img>
@@ -108,14 +148,6 @@ const Page = () => {
         </div>
         <div className="text-gray-500" onClick={() => pushComment(postId)}>
           Add a comment...
-        </div>
-      </div>
-
-      <div className="h-[100px] w-[200px] rounded-xl bg-gray-200 flex justify-center">
-        <div className="">
-          <div className="text-red-600 font-bold">Delete</div>
-          <div className="font-bold">Edit</div>
-          <div className="font-bold">Cancel</div>
         </div>
       </div>
     </div>

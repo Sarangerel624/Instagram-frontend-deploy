@@ -1,5 +1,5 @@
 "use client";
-
+import * as React from "react";
 import { Default_Profile } from "@/icons/defualtProjile";
 import { Like_comment_logo } from "@/icons/Frame 16";
 import { Ig_Logo } from "@/icons/image 5";
@@ -9,12 +9,25 @@ import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+
+import useEmblaCarousel, {
+  type UseEmblaCarouselType,
+} from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 type Post = {
   profilePicture: string;
-  images: string;
+  images: string[];
   caption: string;
-  like: string;
-  comment: string;
+  like: string[];
+  comment: string[];
   _id: string;
   user: {
     _id: string;
@@ -74,8 +87,11 @@ const Page = () => {
     }
   }, [token]);
 
+  const plugin = React.useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: true })
+  );
 
-  console.log(posts, "as")
+  console.log(posts, "as");
   return (
     <div>
       {posts.map((post, index) => {
@@ -92,7 +108,25 @@ const Page = () => {
                 {post?.user?.username}
               </div>
             </div>
-            <img src={post.images} />
+
+            <Carousel
+              plugins={[plugin.current]}
+              className="w-full max-w-xs"
+              onMouseEnter={plugin.current.stop}
+              onMouseLeave={plugin.current.reset}
+            >
+              <CarouselContent>
+                {post.images.map((postImg, index) => (
+                  <CarouselItem key={index}>
+                    <div className="p-1">
+                      <img src={postImg} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
             <div className="m-1">
               <div className="flex gap-2">
                 <div onClick={() => postlikes(post._id)}>
@@ -112,9 +146,7 @@ const Page = () => {
                 <div className="font-bold">{post?.user?.username}</div>
                 <div> {post?.caption}</div>
               </div>
-              <div className="text-gray-500">
-                All view {post.comment.length} comments
-              </div>
+              <div className="text-gray-500">All view comments</div>
               <div
                 className="text-gray-500"
                 onClick={() => pushComment(post._id)}

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Default_Profile } from "@/icons/defualtProjile";
 import { useUser } from "@/providers/AuthProvider";
+
 type upDatetype = {
   username: string;
   bio: string;

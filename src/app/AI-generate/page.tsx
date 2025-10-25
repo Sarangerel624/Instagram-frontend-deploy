@@ -8,10 +8,9 @@ import { upload } from "@vercel/blob/client";
 import { toast } from "sonner";
 import { useUser } from "@/providers/AuthProvider";
 
-
 const Page = () => {
   const [prompt, setPrompt] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [caption, setCaption] = useState("");
   const HF_API_KEY = process.env.HF_API_KEY;
@@ -20,7 +19,6 @@ const Page = () => {
     if (!prompt.trim()) return;
 
     setIsLoading(true);
-    setImageUrl("");
 
     try {
       const headers = {
@@ -55,7 +53,11 @@ const Page = () => {
         handleUploadUrl: "/api/upload",
       });
 
-      setImageUrl(uploaded.url);
+      // setImageUrl(uploaded.url);
+      setImageUrl((prev) => {
+        return [...prev, uploaded.url];
+      });
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
     }
@@ -70,7 +72,7 @@ const Page = () => {
       },
       body: JSON.stringify({
         caption: caption,
-        images: [imageUrl],
+        images: imageUrl,
       }),
     });
     console.log(response, "res shu");
@@ -88,6 +90,7 @@ const Page = () => {
     setCaption(e.target.value);
   };
 
+  console.log(imageUrl);
   return (
     <div>
       <div>
@@ -106,7 +109,7 @@ const Page = () => {
           value={prompt}
           id="prompt"
           onChange={(e) => setPrompt(e.target.value)}
-          disabled={isLoading}
+          // disabled={isLoading}
           className="w-92 h-30 m-2.5"
         ></Input>
         <Button onClick={generateImage} disabled={!prompt.trim() || isLoading}>
@@ -118,10 +121,15 @@ const Page = () => {
           <div>
             <h2 className="font-bold">Your generared image:</h2>
             <div>
-              <img
-                src={imageUrl}
-                className="w-full h-auto rounded-b-lg shadow-md"
-              />
+              {imageUrl.map((url) => {
+                return (
+                  <img
+                    src={url}
+                    key={url}
+                    className="w-full h-auto rounded-b-lg shadow-md"
+                  />
+                );
+              })}
             </div>
           </div>
         )}
