@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react";
@@ -87,76 +87,112 @@ const Page = () => {
     }
   }, [token]);
 
-  const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+  const autoplay = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
   );
 
   console.log(posts, "as");
+
   return (
-    <div>
-      {posts.map((post, index) => {
-        return (
-          <div key={index}>
-            <div className="flex flex-row gap-2.5 mt-9">
-              <div className="mb-2" onClick={() => pushToUserProfile}>
-                <Default_Profile />
+    <div className="flex flex-col items-center mt-8 space-y-10">
+      {posts.map((post, index) => (
+        <div
+          key={index}
+          className="bg-white border border-gray-200 rounded-lg shadow-sm w-full max-w-md"
+        >
+          {/* User Info */}
+          <div className="flex items-center gap-3 p-4">
+            <Avatar
+              className="cursor-pointer h-11 w-11 ring-1 ring-gray-200"
+              onClick={() => pushToUserProfile(post.user._id)}
+            >
+              <AvatarImage
+                src={post?.user?.profilePicture?.[0]}
+                alt={post?.user?.username}
+              />
+              <AvatarFallback>
+                {post?.user?.username?.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+
+            <div
+              className="font-semibold text-gray-800 cursor-pointer hover:underline"
+              onClick={() => pushToUserProfile(post.user._id)}
+            >
+              {post?.user?.username}
+            </div>
+          </div>
+
+          {/* Image Carousel */}
+          <Carousel
+            plugins={[autoplay.current]}
+            className="relative w-full"
+            onMouseEnter={autoplay.current.stop}
+            onMouseLeave={autoplay.current.reset}
+          >
+            <CarouselContent>
+              {post.images.map((postImg, index) => (
+                <CarouselItem key={index}>
+                  <div className="aspect-square bg-black">
+                    <img
+                      src={postImg}
+                      alt="post"
+                      className="object-cover w-full h-full transition-all duration-300 hover:opacity-90"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+
+          {/* Post Actions */}
+          <div className="p-4 space-y-2">
+            <div className="flex items-center gap-3">
+              <div
+                onClick={() => postlikes(post._id)}
+                className="cursor-pointer hover:scale-110 transition-transform"
+              >
+                {post.like.includes(myId!) ? (
+                  <Heart color="red" fill="red" />
+                ) : (
+                  <Heart />
+                )}
               </div>
               <div
-                className="font-bold w-36 mt-1"
-                onClick={() => pushToUserProfile(post.user._id)}
+                className="cursor-pointer hover:scale-110 transition-transform"
+                onClick={() => pushComment(post._id)}
               >
-                {post?.user?.username}
+                <MessageCircle />
               </div>
             </div>
 
-            <Carousel
-              plugins={[plugin.current]}
-              className="w-full max-w-xs"
-              onMouseEnter={plugin.current.stop}
-              onMouseLeave={plugin.current.reset}
+            <div className="font-semibold text-sm">
+              {post.like.length} likes
+            </div>
+
+            {/* Caption */}
+            <div className="text-sm">
+              <span className="font-semibold mr-2">{post?.user?.username}</span>
+              {post?.caption}
+            </div>
+
+            {/* Comments */}
+            <div
+              className="text-gray-500 text-sm cursor-pointer hover:text-gray-700 transition-colors"
+              onClick={() => pushComment(post._id)}
             >
-              <CarouselContent>
-                {post.images.map((postImg, index) => (
-                  <CarouselItem key={index}>
-                    <div className="p-1">
-                      <img src={postImg} />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-            <div className="m-1">
-              <div className="flex gap-2">
-                <div onClick={() => postlikes(post._id)}>
-                  {post.like.includes(myId!) ? (
-                    <Heart color="red" fill="red" />
-                  ) : (
-                    <Heart />
-                  )}
-                </div>
-                <div>{post.like.length}</div>
-                <div onClick={() => pushComment(post._id)}>
-                  <MessageCircle />
-                </div>
-              </div>
-              <div className="font-bold">{post.like.length} likes</div>
-              <div className="flex gap-2">
-                <div className="font-bold">{post?.user?.username}</div>
-                <div> {post?.caption}</div>
-              </div>
-              <div className="text-gray-500">All view comments</div>
-              <div
-                className="text-gray-500"
-                onClick={() => pushComment(post._id)}
-              >
-                Add a comment...
-              </div>
+              View all comments
+            </div>
+
+            <div
+              className="text-gray-400 text-sm cursor-pointer hover:text-gray-600 transition-colors"
+              onClick={() => pushComment(post._id)}
+            >
+              Add a comment…
             </div>
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 };

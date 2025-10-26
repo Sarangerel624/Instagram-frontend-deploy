@@ -6,16 +6,27 @@ import { Default_Profile } from "@/icons/defualtProjile";
 import { Button } from "@/components/ui/button";
 import { ZeroPost } from "@/icons/zeroPost";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 type PostsType = {
   images: string[];
   caption: string;
   bio: string;
   _id: string;
 };
+
+type UserDataType = {
+  bio: string;
+  username: string;
+  email: string;
+  images: string[];
+  followers: string[];
+  following: string[];
+  profilePicture: string[];
+};
 const Page = () => {
   const { token, user, setToken } = useUser();
   const [posts, setPosts] = useState<PostsType[]>([]);
-  const [userData, setUserdata] = useState();
+  const [userData, setUserdata] = useState<UserDataType>();
   const { push } = useRouter();
   const myPost = async () => {
     const res = await fetch("http://localhost:5000/profilePost", {
@@ -54,6 +65,16 @@ const Page = () => {
   const pushToEditPro = () => {
     push(`/editProfile/${user?._id}`);
   };
+
+  const logOut = () => {
+    localStorage.removeItem("token");
+    push("/login");
+  };
+
+  const pushToUserProfile = (userId: string) => {
+    push(`/profile/${userId}`);
+  };
+
   useEffect(() => {
     if (token) {
       myPost();
@@ -61,63 +82,105 @@ const Page = () => {
     }
   }, [token]);
 
-  console.log(userData, "userdataa");
+  console.log(userData, "userdataaa");
 
   return (
-    <div>
-      <div className="text-center mt-10 font-bold">{user?.username}</div>
-      <div className="flex gap-4 px-3">
-        <div>
-          <Default_Profile />
-        </div>
-        <div>
-          <div className="font-bold text-[20px]">{user?.username}</div>
-          <Button
-            variant="secondary"
-            className="font-bold h-6 mt-1.5"
-            onClick={pushToEditPro}
+    <div className="max-w-3xl mx-auto mt-10 px-4 text-gray-800">
+      {/* Username header */}
+
+      {/* Top Profile Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-8 border-b border-gray-200 pb-6">
+        {/* Avatar */}
+        <div className="flex justify-center sm:justify-start">
+          <Avatar
+            className="h-24 w-24 sm:h-32 sm:w-32 cursor-pointer ring-1 ring-gray-300"
+            onClick={() => push("/ToUserProfile")}
           >
-            Edit profile
-          </Button>
+            <AvatarImage
+              src={userData?.profilePicture?.[0]}
+              alt={userData?.username}
+            />
+            <AvatarFallback className="text-xl font-semibold bg-gray-100">
+              {userData?.username?.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+
+        {/* Username, Buttons */}
+        <div className="flex flex-col sm:ml-10 space-y-2 text-center sm:text-left">
+          <div className="text-2xl font-semibold">{userData?.username}</div>
+          <div className="flex justify-center sm:justify-start gap-3">
+            <Button
+              variant="secondary"
+              className="font-semibold px-4 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200"
+              onClick={pushToEditPro}
+            >
+              Edit profile
+            </Button>
+            <Button
+              variant="secondary"
+              className="font-semibold px-4 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200"
+              onClick={logOut}
+            >
+              Log out
+            </Button>
+          </div>
+          <div className="mt-4 text-center sm:text-left">
+            <div className="font-medium">{userData?.bio || "No bio yet."}</div>
+          </div>
         </div>
       </div>
-      <div className="font-bold border-b-1 bg-gray-500 mt-4">{user?.bio}</div>
-      <div className="flex flex-row justify-between px-10 border-b-1 ">
-        <div>
-          <div>{posts.length}</div>
-          <div>posts</div>
+
+      {/* Bio */}
+
+      {/* Stats */}
+      <div className="flex justify-around sm:justify-center sm:gap-16 pt-3 pb-2 text-sm">
+        <div className="text-center">
+          <div className="font-bold text-base">{posts.length}</div>
+          <div className="text-gray-500">Posts</div>
         </div>
-        <div>
-          <div>{user?.followers?.length}</div>
-          <div>followers</div>
+        <div className="text-center">
+          <div className="font-bold text-base">
+            {userData?.followers?.length}
+          </div>
+          <div className="text-gray-500">Followers</div>
         </div>
-        <div>
-          <div>{user?.following?.length}</div>
-          <div>following</div>
+        <div className="text-center">
+          <div className="font-bold text-base">
+            {userData?.following?.length}
+          </div>
+          <div className="text-gray-500">Following</div>
         </div>
       </div>
+
+      {/* Divider */}
+      <div className="border-t border-gray-200 my-4" />
+
+      {/* Posts */}
       {posts.length === 0 ? (
-        <div className="flex flex-col justify-center items-center gap-2.5 mt-20">
-          <div>
-            <ZeroPost />
-          </div>
-          <div className="font-bold text-black text-2xl">Share Photos</div>
-          <div className="text-center">
-            When you share photos, they will appear on your profile
-          </div>
-          <div className="text-center font-bold text-blue-500">
+        <div className="flex flex-col justify-center items-center gap-3 mt-20 text-gray-600">
+          <ZeroPost />
+          <div className="font-bold text-xl text-black">Share Photos</div>
+          <p className="max-w-sm text-center">
+            When you share photos, they will appear on your profile.
+          </p>
+          <div className="font-bold text-blue-500 cursor-pointer hover:underline">
             Share your first photo
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap flex-row">
+        <div className="grid grid-cols-3 gap-1 sm:gap-2">
           {posts.map((post, index) => (
             <div
               key={index}
-              className="w-1/3"
+              className="relative cursor-pointer group"
               onClick={() => pushToUserPost(post._id)}
             >
-              <img src={post?.images?.[0]} className="h-40 " />
+              <img
+                src={post?.images?.[0]}
+                className="aspect-square object-cover transition-all duration-200 group-hover:opacity-80"
+                alt="post"
+              />
             </div>
           ))}
         </div>
