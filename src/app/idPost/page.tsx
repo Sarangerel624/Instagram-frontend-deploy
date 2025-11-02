@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ZeroPost } from "@/icons/zeroPost";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Footer } from "../_components/Footer";
 type PostsType = {
   images: string[];
   caption: string;
@@ -28,14 +29,18 @@ const Page = () => {
   const [posts, setPosts] = useState<PostsType[]>([]);
   const [userData, setUserdata] = useState<UserDataType>();
   const { push } = useRouter();
+  const router = useRouter();
   const myPost = async () => {
-    const res = await fetch("http://localhost:5000/profilePost", {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch(
+      "https://insta-backend-gbdi.onrender.com/profilePost",
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     if (res.ok) {
       const response = await res.json();
       setPosts(response);
@@ -45,7 +50,7 @@ const Page = () => {
   const userId = user?._id;
   const userDataFetch = async () => {
     const response = await fetch(
-      `http://localhost:5000/editUserdata/${userId}`,
+      `https://insta-backend-gbdi.onrender.com/editUserdata/${userId}`,
       {
         headers: {
           "Content-type": "application/json",
@@ -68,7 +73,7 @@ const Page = () => {
 
   const logOut = () => {
     localStorage.removeItem("token");
-    push("/login");
+    window.location.href = "/login";
   };
 
   const pushToUserProfile = (userId: string) => {
@@ -82,15 +87,9 @@ const Page = () => {
     }
   }, [token]);
 
-  console.log(userData, "userdataaa");
-
   return (
     <div className="max-w-3xl mx-auto mt-10 px-4 text-gray-800">
-      {/* Username header */}
-
-      {/* Top Profile Section */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-8 border-b border-gray-200 pb-6">
-        {/* Avatar */}
         <div className="flex justify-center sm:justify-start">
           <Avatar
             className="h-24 w-24 sm:h-32 sm:w-32 cursor-pointer ring-1 ring-gray-300"
@@ -106,7 +105,6 @@ const Page = () => {
           </Avatar>
         </div>
 
-        {/* Username, Buttons */}
         <div className="flex flex-col sm:ml-10 space-y-2 text-center sm:text-left">
           <div className="text-2xl font-semibold">{userData?.username}</div>
           <div className="flex justify-center sm:justify-start gap-3">
@@ -120,7 +118,7 @@ const Page = () => {
             <Button
               variant="secondary"
               className="font-semibold px-4 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200"
-              onClick={logOut}
+              onClick={() => logOut()}
             >
               Log out
             </Button>
@@ -131,9 +129,6 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Bio */}
-
-      {/* Stats */}
       <div className="flex justify-around sm:justify-center sm:gap-16 pt-3 pb-2 text-sm">
         <div className="text-center">
           <div className="font-bold text-base">{posts.length}</div>
@@ -153,10 +148,8 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Divider */}
       <div className="border-t border-gray-200 my-4" />
 
-      {/* Posts */}
       {posts.length === 0 ? (
         <div className="flex flex-col justify-center items-center gap-3 mt-20 text-gray-600">
           <ZeroPost />
@@ -185,6 +178,7 @@ const Page = () => {
           ))}
         </div>
       )}
+      <Footer />
     </div>
   );
 };

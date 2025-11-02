@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Footer } from "@/app/_components/Footer";
 
 type UserType = {
   username: string;
@@ -32,6 +33,7 @@ type UserPostType = {
   like: string[];
   profilePic: string[];
   user: UserType;
+  _id: string;
 };
 const Page = () => {
   const [userPost, setUserPost] = useState<UserPostType>();
@@ -43,7 +45,7 @@ const Page = () => {
   const postId = params.postId;
   const fetchPosts = async () => {
     const response = await fetch(
-      `http://localhost:5000/userPostyee/${postId}`,
+      `https://insta-backend-gbdi.onrender.com/userPostyee/${postId}`,
       {
         method: "GET",
         headers: {
@@ -59,7 +61,7 @@ const Page = () => {
   };
   const postlikes = async () => {
     const response = await fetch(
-      `http://localhost:5000/toggle-like/${postId}`,
+      `https://insta-backend-gbdi.onrender.com/toggle-like/${postId}`,
       {
         method: "POST",
         headers: {
@@ -79,7 +81,7 @@ const Page = () => {
 
   const deletePost = async () => {
     const response = await fetch(
-      `http://localhost:5000/userPostDelete/${postId}`,
+      `https://insta-backend-gbdi.onrender.com/userPostDelete/${postId}`,
       {
         method: "DELETE",
         headers: {
@@ -102,7 +104,6 @@ const Page = () => {
   console.log(userPost);
   return (
     <div className="mt-10 max-w-md mx-auto bg-white rounded-md shadow-sm border border-gray-200">
-      {/* Header */}
       <div className="flex justify-between items-center p-4">
         <div className="flex items-center gap-3">
           <Avatar
@@ -126,7 +127,6 @@ const Page = () => {
           </div>
         </div>
 
-        {/* Post Menu */}
         <Dialog>
           <DialogTrigger asChild>
             <button className="hover:bg-gray-100 rounded-full p-2">
@@ -153,7 +153,6 @@ const Page = () => {
         </Dialog>
       </div>
 
-      {/* Image */}
       <div className="relative">
         <img
           src={userPost?.images?.[0]}
@@ -162,7 +161,6 @@ const Page = () => {
         />
       </div>
 
-      {/* Actions */}
       <div className="flex items-center gap-3 p-4">
         <div
           onClick={postlikes}
@@ -178,14 +176,13 @@ const Page = () => {
         <div className="text-sm">{userPost?.like.length}</div>
 
         <div
-          onClick={() => pushComment(postId)}
+          onClick={() => pushComment(userPost?._id!)}
           className="cursor-pointer hover:scale-110 transition-transform"
         >
           <MessageCircle />
         </div>
       </div>
 
-      {/* Caption */}
       <div className="px-4 pb-2 text-sm">
         <div className="flex gap-2">
           <span className="font-semibold">{userPost?.user?.username}</span>
@@ -193,18 +190,18 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Comments */}
       <div className="px-4 pb-4 text-sm text-gray-500">
         <div className="cursor-pointer hover:text-gray-700">
           View all {userPost?.comments.length} comments
         </div>
         <div
           className="cursor-pointer hover:text-gray-700"
-          onClick={() => pushComment(postId)}
+          onClick={() => pushComment(userPost?._id!)}
         >
           Add a comment...
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

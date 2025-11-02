@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Footer } from "@/app/_components/Footer";
 
 type upDatetype = {
   username: string;
@@ -59,7 +60,7 @@ const Page = () => {
   const userId = user?._id;
   const editUserdata = async () => {
     const response = await fetch(
-      `http://localhost:5000/editUserdata/${userId}`,
+      `https://insta-backend-gbdi.onrender.com/editUserdata/${userId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -79,18 +80,21 @@ const Page = () => {
     setImgFile(file);
   };
   const editProfileUser = async () => {
-    const response = await fetch(`http://localhost:5000/editUserProfile`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        username: inputValues.username,
-        bio: inputValues.bio,
-        _id: user?._id,
-      }),
-    });
+    const response = await fetch(
+      `https://insta-backend-gbdi.onrender.com/editUserProfile`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: inputValues.username,
+          bio: inputValues.bio,
+          _id: user?._id,
+        }),
+      }
+    );
     if (response.ok) {
       const res = await response.json();
       setUpdate(res);
@@ -99,17 +103,20 @@ const Page = () => {
   };
 
   const editProfilePic = async () => {
-    const response = await fetch(`http://localhost:5000/editProfilePicture`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        profilePicture: imageUrl,
-        _id: user?._id,
-      }),
-    });
+    const response = await fetch(
+      `https://insta-backend-gbdi.onrender.com/editProfilePicture`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          profilePicture: imageUrl,
+          _id: user?._id,
+        }),
+      }
+    );
     if (response.ok) {
       const res = await response.json();
       setUpdate(res);
@@ -126,64 +133,89 @@ const Page = () => {
   console.log(editUserDatas, "img url");
 
   return (
-    <div>
-      <div>
-        <div className="text-center mt-8 font-bold">Edit profile</div>
-        <div className="border-t-2 mt-2 ml-3 ">Edit profile</div>
-        <div className="ml-3">
-          <div className="flex p-1.5 gap-2 ml-3">
-            <Avatar className="rounded-ls h-11 w-11">
-              <AvatarImage
-                src={editUserDatas?.profilePicture}
-                alt="@evilrabbit"
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10">
+      <div className="bg-white shadow-md rounded-lg w-full max-w-md p-6">
+        <h2 className="text-2xl font-semibold text-center text-gray-800">
+          Edit Profile
+        </h2>
+        <div className="border-b-2 border-gray-200 mt-4 mb-6"></div>
+
+        <div className="flex items-center gap-4 mb-6">
+          <Avatar className="h-16 w-16 rounded-full ring-2 ring-blue-400">
+            <AvatarImage
+              src={editUserDatas?.profilePicture}
+              alt={editUserDatas?.username}
+            />
+            <AvatarFallback>
+              {editUserDatas?.username?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+          <Dialog>
+            <DialogTrigger>
+              <button className="text-blue-600 font-medium hover:underline">
+                Change photo
+              </button>
+            </DialogTrigger>
+            <DialogContent className="bg-white rounded-lg p-5 shadow-lg">
+              <DialogTitle className="font-semibold text-gray-700 mb-3">
+                Change Profile Picture
+              </DialogTitle>
+              <Input
+                type="file"
+                accept="image/*"
+                className="w-full"
+                onChange={handleFile}
               />
-              <AvatarFallback>{editUserDatas?.username}</AvatarFallback>
-            </Avatar>
-            <Dialog>
-              <DialogTrigger>
-                <div className="text-blue-400 font-bold">Change photo</div>
-              </DialogTrigger>
-              <DialogTitle></DialogTitle>
-              <DialogContent>
-                <div className="ml-3">Profile Picture</div>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  className="w-[300px] ml-3"
-                  placeholder="zurga oruulna uu"
-                  onChange={handleFile}
-                />
-                <DialogFooter>
-                  <Button onClick={uploadedImg} className="w-30 ml-3">
-                    upload img
-                  </Button>
-                  <Button onClick={editProfilePic} className="w-60 ml-3">
-                    Change profile picture
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
+              <DialogFooter className="flex justify-end gap-2 mt-4">
+                <Button onClick={uploadedImg} variant="outline">
+                  Upload
+                </Button>
+                <Button
+                  onClick={editProfilePic}
+                  className="bg-blue-600 text-white"
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
-        <div className="ml-3">Username</div>
-        <Input
-          placeholder={editUserDatas?.username}
-          className="w-[400px] ml-3"
-          name="username"
-          value={inputValues.username}
-          onChange={(e) => hangleInputs(e)}
-        />
-        <div className="ml-3">Bio</div>
-        <Input
-          className="w-[400px] ml-3"
-          placeholder={editUserDatas?.bio}
-          name="bio"
-          value={inputValues.bio}
-          onChange={(e) => hangleInputs(e)}
-        />
+
+        <div className="mb-4">
+          <label className="text-gray-700 font-medium mb-1 block">
+            Username
+          </label>
+          <Input
+            placeholder={editUserDatas?.username}
+            className="w-full"
+            name="username"
+            value={inputValues.username}
+            onChange={(e) => hangleInputs(e)}
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="text-gray-700 font-medium mb-1 block">Bio</label>
+          <Input
+            placeholder={editUserDatas?.bio || "Tell us about yourself..."}
+            className="w-full"
+            name="bio"
+            value={inputValues.bio}
+            onChange={(e) => hangleInputs(e)}
+          />
+        </div>
+
+        <Button
+          onClick={editProfileUser}
+          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
+        >
+          Save Changes
+        </Button>
       </div>
-      <div>
-        <Button onClick={editProfileUser}>Submit</Button>
+
+      <div className="mt-10 w-full">
+        <Footer />
       </div>
     </div>
   );

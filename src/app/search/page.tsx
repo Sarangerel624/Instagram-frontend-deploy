@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Default_Profile } from "@/icons/defualtProjile";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Footer } from "../_components/Footer";
 type UserDataType = {
   _id: string;
   username: string;
@@ -36,12 +37,15 @@ const Page = () => {
   };
 
   const allusers = async () => {
-    const response = await fetch(`http://localhost:5000/searchUsers/${input}`, {
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `https://insta-backend-gbdi.onrender.com/searchUsers/${input}`,
+      {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     console.log(response);
     if (response.ok) {
       const res = await response.json();
@@ -104,6 +108,7 @@ const Page = () => {
           );
         })}
       </div>
+      <Footer />
     </div>
   );
 };

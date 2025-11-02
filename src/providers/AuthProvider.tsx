@@ -66,16 +66,19 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:5000/login", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+    const response = await fetch(
+      "https://insta-backend-gbdi.onrender.com/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      }
+    );
 
     if (response.ok) {
       const localToken = await response.json();
@@ -95,17 +98,20 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     password: string,
     username: string
   ) => {
-    const createdUser = await fetch("http://localhost:5000/user", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        username,
-      }),
-    });
+    const createdUser = await fetch(
+      "https://insta-backend-gbdi.onrender.com/user",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          username,
+        }),
+      }
+    );
     if (createdUser.ok) {
       const signUpUser = await createdUser.json();
       localStorage.setItem("token", signUpUser);

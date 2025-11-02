@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ZeroPost } from "@/icons/zeroPost";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Footer } from "@/app/_components/Footer";
 type UserDataType = {
   _id: string;
   username: string;
@@ -39,7 +40,7 @@ const Page = () => {
 
   const fetchHeaders = async () => {
     const response = await fetch(
-      `http://localhost:5000/profileHeader/${userId}`,
+      `https://insta-backend-gbdi.onrender.com/profileHeader/${userId}`,
       {
         method: "GET",
         headers: {
@@ -55,13 +56,16 @@ const Page = () => {
   };
 
   const fetchPosts = async () => {
-    const response = await fetch(`http://localhost:5000/userPost/${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `https://insta-backend-gbdi.onrender.com/userPost/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       setUserPost(data);
@@ -70,7 +74,7 @@ const Page = () => {
 
   const followToggle = async (userId: string) => {
     const response = await fetch(
-      `http://localhost:5000/follow-toggle/${userId}`,
+      `https://insta-backend-gbdi.onrender.com/follow-toggle/${userId}`,
       {
         method: "POST",
         headers: {
@@ -109,7 +113,10 @@ const Page = () => {
                   src={user?.profilePicture?.[0]}
                   alt="@evilrabbit"
                 />
-                <AvatarFallback>{user?.username}</AvatarFallback>
+
+                <AvatarFallback>
+                  {user?.username.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
             </div>
 
@@ -126,7 +133,6 @@ const Page = () => {
                 )}
               </div>
 
-              {/* Stats */}
               <div className="flex gap-8 text-sm text-gray-700">
                 <div className="text-center">
                   <div className="font-semibold text-base">
@@ -148,17 +154,14 @@ const Page = () => {
                 </div>
               </div>
 
-              {/* Bio */}
               <div className="text-sm text-gray-700 max-w-xs text-center sm:text-left">
                 {user.bio || "No bio yet."}
               </div>
             </div>
           </div>
 
-          {/* Divider */}
           <div className="border-t border-gray-300 mt-4 mb-2" />
 
-          {/* Posts Section */}
           {userPost.length === 0 ? (
             <div className="flex flex-col justify-center items-center gap-3 mt-10 text-center text-gray-600">
               <ZeroPost />
@@ -189,6 +192,7 @@ const Page = () => {
           )}
         </div>
       ))}
+      <Footer />
     </div>
   );
 };

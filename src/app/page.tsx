@@ -5,7 +5,7 @@ import { Like_comment_logo } from "@/icons/Frame 16";
 import { Ig_Logo } from "@/icons/image 5";
 import { useEffect, useState } from "react";
 import { useUser } from "@/providers/AuthProvider";
-import { useRouter } from "next/navigation";
+
 import { Heart } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -22,6 +22,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Footer } from "./_components/Footer";
+import { useRouter } from "next/navigation";
 type Post = {
   profilePicture: string;
   images: string[];
@@ -45,22 +47,26 @@ const Page = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const { token, user, setToken } = useUser();
   const { push } = useRouter();
+
   const myId = user?._id;
   const allposts = async () => {
-    const response = await fetch("http://localhost:5000/allpost", {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      "https://insta-backend-gbdi.onrender.com/allpost",
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const result = await response.json();
     setPosts(result);
   };
 
   const postlikes = async (postId: string) => {
     const response = await fetch(
-      `http://localhost:5000/toggle-like/${postId}`,
+      `https://insta-backend-gbdi.onrender.com/toggle-like/${postId}`,
       {
         method: "POST",
         headers: {
@@ -81,26 +87,27 @@ const Page = () => {
   const pushComment = (userId: string) => {
     push(`/comment/${userId}`);
   };
+
   useEffect(() => {
     if (token) {
       allposts();
+    } else {
+      push("/login");
     }
   }, [token]);
 
+  const randomPosts = posts.sort(() => Math.random() - 0.5);
   const autoplay = React.useRef(
     Autoplay({ delay: 3000, stopOnInteraction: false })
   );
 
-  console.log(posts, "as");
-
   return (
     <div className="flex flex-col items-center mt-8 space-y-10">
-      {posts.map((post, index) => (
+      {randomPosts.map((post, index) => (
         <div
           key={index}
           className="bg-white border border-gray-200 rounded-lg shadow-sm w-full max-w-md"
         >
-          {/* User Info */}
           <div className="flex items-center gap-3 p-4">
             <Avatar
               className="cursor-pointer h-11 w-11 ring-1 ring-gray-200"
@@ -123,7 +130,6 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Image Carousel */}
           <Carousel
             plugins={[autoplay.current]}
             className="relative w-full"
@@ -145,7 +151,6 @@ const Page = () => {
             </CarouselContent>
           </Carousel>
 
-          {/* Post Actions */}
           <div className="p-4 space-y-2">
             <div className="flex items-center gap-3">
               <div
@@ -170,13 +175,11 @@ const Page = () => {
               {post.like.length} likes
             </div>
 
-            {/* Caption */}
             <div className="text-sm">
               <span className="font-semibold mr-2">{post?.user?.username}</span>
               {post?.caption}
             </div>
 
-            {/* Comments */}
             <div
               className="text-gray-500 text-sm cursor-pointer hover:text-gray-700 transition-colors"
               onClick={() => pushComment(post._id)}
@@ -193,6 +196,7 @@ const Page = () => {
           </div>
         </div>
       ))}
+      <Footer />
     </div>
   );
 };

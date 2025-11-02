@@ -4,6 +4,7 @@ import { Create_Logo } from "@/icons/creare.photo.logo";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Xsign } from "@/icons/Button";
+import { Footer } from "../_components/Footer";
 const Page = () => {
   const { push } = useRouter();
 
@@ -33,6 +34,7 @@ const Page = () => {
           Generate with AI
         </Button>
       </div>
+      <Footer />
     </div>
   );
 };
