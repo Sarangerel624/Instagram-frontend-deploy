@@ -29,7 +29,7 @@ const Page = () => {
       };
 
       const response = await fetch(
-        `https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0`,
+        `https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-base-1.0`,
         {
           method: "POST",
           headers: headers,
@@ -96,11 +96,12 @@ const Page = () => {
   };
 
   console.log(imageUrl);
+  console.log(caption, "qw");
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border border-gray-100">
       <div className="relative mb-6 border-b pb-3">
         <div
-          className="absolute left-0 top-0 cursor-pointer p-2 hover:bg-gray-100 rounded-full"
+          className="absolute left-0 top-0 cursor-pointer hover:bg-gray-100 rounded-full"
           onClick={() => push("/create")}
         >
           <Xsign />

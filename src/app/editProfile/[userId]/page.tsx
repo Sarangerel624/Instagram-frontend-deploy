@@ -153,9 +153,9 @@ const Page = () => {
 
           <Dialog>
             <DialogTrigger>
-              <button className="text-blue-600 font-medium hover:underline">
+              <div className="text-blue-600 font-medium hover:underline">
                 Change photo
-              </button>
+              </div>
             </DialogTrigger>
             <DialogContent className="bg-white rounded-lg p-5 shadow-lg">
               <DialogTitle className="font-semibold text-gray-700 mb-3">
