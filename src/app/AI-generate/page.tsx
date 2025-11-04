@@ -133,7 +133,7 @@ const Page = () => {
       </div>
 
       <div className="mb-6">
-        <h2 className="font-bold text-2xl mb-2 text-gray-900">
+        <h2 className="font-bold text-2xl mb-2 text-gray-700">
           Explore AI-generated images
         </h2>
         <p className="text-gray-600 mb-4">
