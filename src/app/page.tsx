@@ -96,14 +96,14 @@ const Page = () => {
     }
   }, [token]);
 
-  const randomPosts = posts.sort(() => Math.random() - 0.5);
+  // const randomPosts = posts.sort(() => Math.random() - 0.5);
   const autoplay = React.useRef(
     Autoplay({ delay: 3000, stopOnInteraction: false })
   );
 
   return (
     <div className="flex flex-col items-center mt-8 space-y-10">
-      {randomPosts.map((post, index) => (
+      {posts.map((post, index) => (
         <div
           key={index}
           className="bg-white border border-gray-200 rounded-lg shadow-sm w-full max-w-md"
