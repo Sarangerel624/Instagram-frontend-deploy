@@ -8,6 +8,7 @@ import { MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Footer } from "@/app/_components/Footer";
+
+import Autoplay from "embla-carousel-autoplay";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 type UserType = {
   username: string;
@@ -43,6 +54,9 @@ const Page = () => {
   const { push } = useRouter();
   const myId = user?._id;
   const postId = params.postId;
+  const autoplay = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
   const fetchPosts = async () => {
     const response = await fetch(
       `https://insta-backend-gbdi.onrender.com/userPostyee/${postId}`,
@@ -129,9 +143,7 @@ const Page = () => {
 
         <Dialog>
           <DialogTrigger asChild>
-            <button className="hover:bg-gray-100 rounded-full p-2">
-              <Ellipsis className="text-gray-600" />
-            </button>
+            <Ellipsis className="text-gray-600" />
           </DialogTrigger>
           <DialogContent className="w-60 rounded-xl">
             <DialogTitle className="text-center font-semibold text-gray-800">
@@ -154,11 +166,26 @@ const Page = () => {
       </div>
 
       <div className="relative">
-        <img
-          src={userPost?.images?.[0]}
-          alt="Post"
-          className="w-full object-cover"
-        />
+        <Carousel
+          plugins={[autoplay.current]}
+          className="relative w-full"
+          onMouseEnter={autoplay.current.stop}
+          onMouseLeave={autoplay.current.reset}
+        >
+          <CarouselContent>
+            {userPost?.images.map((postImg, index) => (
+              <CarouselItem key={index}>
+                <div className="aspect-square bg-black">
+                  <img
+                    src={postImg}
+                    alt="post"
+                    className="object-cover w-full h-full transition-all duration-300 hover:opacity-90"
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
 
       <div className="flex items-center gap-3 p-4">
